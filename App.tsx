@@ -1,20 +1,39 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import AppLoading from "expo-app-loading";
+import * as Font from "expo-font";
+import { LinearGradient } from "expo-linear-gradient";
+import { NativeBaseProvider } from "native-base";
+import React, { useState } from "react";
+import { Routes } from "./src/router";
 
 export default function App() {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+  const config = {
+    dependencies: {
+      "linear-gradient": LinearGradient,
+    },
+  };
+
+  if (!fontsLoaded) {
+    return (
+      <AppLoading
+        startAsync={loadFonts}
+        onFinish={() => setFontsLoaded(true)}
+        onError={console.warn}
+      />
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NativeBaseProvider config={config}>
+      <Routes />
+    </NativeBaseProvider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+async function loadFonts() {
+  await Font.loadAsync({
+    Roboto: require("./assets/fonts/Roboto-Regular.ttf"),
+    "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
+    // Adicione outras variações de fonte conforme necessário
+  });
+}
