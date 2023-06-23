@@ -78,7 +78,7 @@ export function LogIn({ navigation }: LogInProps) {
         <Heading
           size="xl"
           fontWeight="600"
-          fontFamily="Roboto-Bold"
+          fontFamily="Roboto_700Bold"
           color="orange.500"
           _dark={{
             color: "warmGray.50",
@@ -95,7 +95,7 @@ export function LogIn({ navigation }: LogInProps) {
             p="17px, 20px"
             bg={"warmGray.100"}
             borderWidth={0}
-            fontFamily="Roboto"
+            fontFamily="Roboto_400Regular"
             borderRadius={10}
             value={email}
             onChangeText={handleEmailChange}
@@ -119,7 +119,7 @@ export function LogIn({ navigation }: LogInProps) {
             p="17px, 20px"
             bg={"warmGray.100"}
             borderWidth={0}
-            fontFamily="Roboto"
+            fontFamily="Roboto_400Regular"
             borderRadius={10}
             marginTop={4}
             type={show ? "text" : "password"}
@@ -151,13 +151,13 @@ export function LogIn({ navigation }: LogInProps) {
           bg="orange.500"
           isDisabled={!email || !password}
           _text={{
-            fontFamily: "Roboto",
+            fontFamily: "Roboto_400Regular",
           }}
         >
           Login
         </Button>
         <HStack mt="6" justifyContent="center">
-          <Text fontSize="sm" fontFamily="Roboto">
+          <Text fontSize="sm" fontFamily="Roboto_400Regular">
             Don't have an account?{" "}
           </Text>
           <Link
@@ -165,7 +165,7 @@ export function LogIn({ navigation }: LogInProps) {
               color: "orange.500",
               fontWeight: "medium",
               fontSize: "sm",
-              fontFamily: "Roboto",
+              fontFamily: "Roboto_400Regular",
             }}
             onPress={() => navigation.navigate("Signup")}
           >

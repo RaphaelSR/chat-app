@@ -20,7 +20,7 @@ export function UnreadMessagesBadge({ messages }: { messages: number }) {
       justifyContent="center"
       alignItems="center"
     >
-      <Text color="white" fontSize="10px" fontFamily="Roboto">
+      <Text color="white" fontSize="10px" fontFamily="Roboto_400Regular">
         {messages}
       </Text>
     </Box>

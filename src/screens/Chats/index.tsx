@@ -1,13 +1,5 @@
 import { Entypo } from "@expo/vector-icons/";
-import {
-  Avatar,
-  Box,
-  Center,
-  HStack,
-  Heading,
-  Icon,
-  ScrollView,
-} from "native-base";
+import { Avatar, Box, Center, HStack, Heading, Icon } from "native-base";
 import React from "react";
 import { ChatList } from "../../components/ChatList";
 import { chatData } from "../../data/MockedUsers";
@@ -36,7 +28,7 @@ export function Chats() {
           borderBottomWidth="1px"
         >
           <Icon as={<Entypo name="plus" />} size="xl" color="blueGray.800" />
-          <Heading p="4" pb="3" fontSize="18px" fontFamily="Roboto-bold">
+          <Heading p="4" fontSize="18px" fontFamily="Roboto_700Bold">
             Chats
           </Heading>
           <Avatar
@@ -46,10 +38,7 @@ export function Chats() {
             }}
           />
         </HStack>
-
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <ChatList chatData={chatData} />
-        </ScrollView>
+        <ChatList chatData={chatData} />
       </Box>
     </Center>
   );

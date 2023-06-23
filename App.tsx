@@ -1,26 +1,31 @@
-import AppLoading from "expo-app-loading";
-import * as Font from "expo-font";
+import {
+  Roboto_100Thin,
+  Roboto_400Regular,
+  Roboto_700Bold,
+  Roboto_900Black,
+  useFonts,
+} from "@expo-google-fonts/roboto";
 import { LinearGradient } from "expo-linear-gradient";
 import { NativeBaseProvider } from "native-base";
-import React, { useState } from "react";
+import React from "react";
 import { Routes } from "./src/router";
 
 export default function App() {
-  const [fontsLoaded, setFontsLoaded] = useState(false);
   const config = {
     dependencies: {
       "linear-gradient": LinearGradient,
     },
   };
 
+  let [fontsLoaded] = useFonts({
+    Roboto_100Thin,
+    Roboto_400Regular,
+    Roboto_700Bold,
+    Roboto_900Black,
+  });
+
   if (!fontsLoaded) {
-    return (
-      <AppLoading
-        startAsync={loadFonts}
-        onFinish={() => setFontsLoaded(true)}
-        onError={console.warn}
-      />
-    );
+    return null;
   }
 
   return (
@@ -28,12 +33,4 @@ export default function App() {
       <Routes />
     </NativeBaseProvider>
   );
-}
-
-async function loadFonts() {
-  await Font.loadAsync({
-    Roboto: require("./assets/fonts/Roboto-Regular.ttf"),
-    "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
-    // Adicione outras variações de fonte conforme necessário
-  });
 }

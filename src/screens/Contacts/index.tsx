@@ -34,7 +34,7 @@ export function Contacts() {
           borderBottomWidth="1px"
         >
           <Icon as={<Entypo name="plus" />} size="xl" color="blueGray.800" />
-          <Heading p="4" pb="3" fontSize="18px" fontFamily="Roboto-bold">
+          <Heading p="4" fontSize="18px" fontFamily="Roboto_700Bold">
             Contacts
           </Heading>
           <Avatar

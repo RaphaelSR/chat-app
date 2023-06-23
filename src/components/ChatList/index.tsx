@@ -130,7 +130,7 @@ export function ChatList({ chatData }: { chatData: UserData[] }) {
   );
 
   return (
-    <Box bg="white" safeArea flex="1">
+    <Box bg="white" flex="1">
       <SwipeListView
         data={chatListData}
         renderItem={renderChatItem}
