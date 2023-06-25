@@ -1,14 +1,8 @@
 import { Entypo } from "@expo/vector-icons/";
-import {
-  Avatar,
-  Box,
-  Center,
-  HStack,
-  Heading,
-  Icon,
-  ScrollView,
-} from "native-base";
+import { Avatar, Box, Center, HStack, Heading, Icon } from "native-base";
 import React from "react";
+import { ContactList } from "../../components/ContactList";
+import { chatData } from "../../data/MockedUsers";
 
 export function Contacts() {
   return (
@@ -45,7 +39,7 @@ export function Contacts() {
           />
         </HStack>
 
-        <ScrollView showsVerticalScrollIndicator={false}></ScrollView>
+        <ContactList chatData={chatData} />
       </Box>
     </Center>
   );

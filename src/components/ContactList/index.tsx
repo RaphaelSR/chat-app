@@ -12,9 +12,8 @@ import {
 import React, { useState } from "react";
 import { SwipeListView } from "react-native-swipe-list-view";
 import { UserData } from "../../data/MockedUsers";
-import { UnreadMessagesBadge } from "../UnreadMessagesBadge";
 
-export function ChatList({ chatData }: { chatData: UserData[] }) {
+export function ContactList({ chatData }: { chatData: UserData[] }) {
   const sortedChatData = [...chatData].sort(
     (a, b) => new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime()
   );
@@ -49,37 +48,31 @@ export function ChatList({ chatData }: { chatData: UserData[] }) {
       onPress={() => console.log("Chat item pressed")}
       _dark={{ bg: "coolGray.800" }}
       _light={{ bg: "white" }}
-      paddingY={2}
       borderColor="gray.100"
       borderBottomWidth="1px"
     >
-      <Box pl="4" pr="4" py="4">
+      <Box pl="4" pr="4" pb="1" mt="4">
         <HStack alignItems="center" space={3}>
           <Avatar size="48px" source={{ uri: item.avatarUrl }} />
           <VStack>
             <Text color="blueGray.800" _dark={{ color: "warmGray.50" }} bold>
               {item.fullName}
             </Text>
-            <Text
-              color={item.unreadMessages > 0 ? "orange.500" : "blueGray.600"}
-              _dark={{ color: "warmGray.200" }}
-            >
-              {item.recentText}
+            <Text color={"warmGray.400"} _dark={{ color: "warmGray.200" }}>
+              Last seen recently
             </Text>
           </VStack>
           <Spacer />
           <VStack alignItems="center">
             <Text
               fontSize="xs"
-              color="coolGray.400"
+              fontFamily="Roboto_400Regular"
+              color="orange.500"
               _dark={{ color: "warmGray.50" }}
               alignSelf="flex-start"
             >
-              {item.timeStamp}
+              Message
             </Text>
-            {item.unreadMessages > 0 && (
-              <UnreadMessagesBadge messages={item.unreadMessages} />
-            )}
           </VStack>
         </HStack>
       </Box>

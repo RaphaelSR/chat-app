@@ -2,11 +2,51 @@ import { Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { Chats } from "../screens/Chats";
 import { Contacts } from "../screens/Contacts";
 
 const AppStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
+interface TabIconProps {
+  focused: boolean;
+  iconName: string;
+  color: string;
+  label: string;
+}
+
+function TabIcon({ focused, iconName, color, label }: TabIconProps) {
+  return (
+    <View style={focused ? styles.focusedTab : styles.tab}>
+      <Ionicons name={iconName} size={24} color={color} />
+      <Text
+        style={{
+          color: color,
+          fontFamily: focused ? "Roboto_700Bold" : "Roboto_400Regular",
+        }}
+      >
+        {label}
+      </Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  tab: {
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+  },
+  focusedTab: {
+    borderBottomWidth: 1,
+    borderBottomColor: "orange",
+    fontFamily: "Roboto_700Bold",
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+  },
+});
 
 function TabNavigator() {
   return (
@@ -22,12 +62,13 @@ function TabNavigator() {
         name="Chats"
         component={Chats}
         options={{
-          tabBarLabel: "Chats",
-          tabBarIcon: ({ focused }) => (
-            <Ionicons
-              name="chatbubble-outline"
-              size={24}
-              color={focused ? "#f97316" : "#1e293b"}
+          tabBarLabel: () => null,
+          tabBarIcon: ({ focused, color }) => (
+            <TabIcon
+              focused={focused}
+              iconName="chatbubble-outline"
+              color={color}
+              label="Chats"
             />
           ),
         }}
@@ -36,12 +77,13 @@ function TabNavigator() {
         name="Contacts"
         component={Contacts}
         options={{
-          tabBarLabel: "Contacts",
-          tabBarIcon: ({ focused }) => (
-            <Ionicons
-              name="person-outline"
-              size={24}
-              color={focused ? "#f97316" : "#1e293b"}
+          tabBarLabel: () => null,
+          tabBarIcon: ({ focused, color }) => (
+            <TabIcon
+              focused={focused}
+              iconName="person-outline"
+              color={color}
+              label="Contacts"
             />
           ),
         }}
