@@ -1,6 +1,7 @@
 import {
   Roboto_100Thin,
   Roboto_400Regular,
+  Roboto_500Medium,
   Roboto_700Bold,
   Roboto_900Black,
   useFonts,
@@ -20,6 +21,7 @@ export default function App() {
   let [fontsLoaded] = useFonts({
     Roboto_100Thin,
     Roboto_400Regular,
+    Roboto_500Medium,
     Roboto_700Bold,
     Roboto_900Black,
   });

@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { ChatRoom } from "../screens/ChatRoom";
 import { Chats } from "../screens/Chats";
 import { Contacts } from "../screens/Contacts";
 
@@ -102,6 +103,7 @@ export function AppRoutes() {
       }}
     >
       <AppStack.Screen name="Home" component={TabNavigator} />
+      <AppStack.Screen name="ChatRoom" component={ChatRoom} />
     </AppStack.Navigator>
   );
 }

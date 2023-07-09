@@ -1,4 +1,5 @@
 import { Entypo, MaterialIcons } from "@expo/vector-icons/";
+import { useNavigation } from "@react-navigation/native";
 import {
   Avatar,
   Box,
@@ -14,6 +15,7 @@ import { SwipeListView } from "react-native-swipe-list-view";
 import { UserData } from "../../data/MockedUsers";
 
 export function ContactList({ chatData }: { chatData: UserData[] }) {
+  const navigation = useNavigation();
   const sortedChatData = [...chatData].sort(
     (a, b) => new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime()
   );
@@ -45,7 +47,7 @@ export function ContactList({ chatData }: { chatData: UserData[] }) {
 
   const renderChatItem = ({ item }: { item: UserData }) => (
     <Pressable
-      onPress={() => console.log("Chat item pressed")}
+      onPress={() => navigation.navigate("ChatRoom", { user: item })}
       _dark={{ bg: "coolGray.800" }}
       _light={{ bg: "white" }}
       borderColor="gray.100"

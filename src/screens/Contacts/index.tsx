@@ -1,5 +1,13 @@
 import { Entypo } from "@expo/vector-icons/";
-import { Avatar, Box, Center, HStack, Heading, Icon } from "native-base";
+import {
+  Avatar,
+  Box,
+  Center,
+  HStack,
+  Heading,
+  Icon,
+  Pressable,
+} from "native-base";
 import React from "react";
 import { ContactList } from "../../components/ContactList";
 import { chatData } from "../../data/MockedUsers";
@@ -27,7 +35,16 @@ export function Contacts() {
           borderColor="gray.100"
           borderBottomWidth="1px"
         >
-          <Icon as={<Entypo name="plus" />} size="xl" color="blueGray.800" />
+          <Pressable
+            width={"38px"}
+            height={"38px"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            borderRadius={"6px"}
+            backgroundColor={"gray.100"}
+          >
+            <Icon as={<Entypo name="plus" />} size="xl" color="gray.400" />
+          </Pressable>
           <Heading p="4" fontSize="18px" fontFamily="Roboto_700Bold">
             Contacts
           </Heading>

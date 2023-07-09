@@ -1,5 +1,5 @@
 import { MaterialIcons } from "@expo/vector-icons/";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
 import {
   Box,
   Button,
@@ -15,18 +15,12 @@ import {
 } from "native-base";
 import React, { useState } from "react";
 
-type LogInScreenNavigationProp = NativeStackScreenProps<any>;
-
-type LogInProps = {
-  navigation: LogInScreenNavigationProp;
-};
-
-export function LogIn({ navigation }: LogInProps) {
+export function LogIn() {
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-
+  const navigation = useNavigation();
   const handleEmailChange = (value: string) => {
     setEmail(value);
   };
