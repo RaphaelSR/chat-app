@@ -12,8 +12,12 @@ import {
   Pressable,
   Text,
   VStack,
+  useToast,
 } from "native-base";
 import React, { useState } from "react";
+import { CustomToast } from "../../components/CustomToast";
+import { useAuth } from "../../contexts/AuthContext";
+import { signUp } from "../../services/auth";
 
 export function SignUp() {
   const [show, setShow] = useState(false);
@@ -21,6 +25,8 @@ export function SignUp() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const navigation = useNavigation();
+  const { setUser } = useAuth();
+  const toast = useToast();
   const handleEmailChange = (value: string) => {
     setEmail(value);
   };
@@ -34,9 +40,28 @@ export function SignUp() {
   };
 
   const handleSubmitSignUp = () => {
-    const userSignUp = { name, email, password };
-    console.log(userSignUp);
+    signUp(email, password)
+      .then((user) => {
+        setUser(user);
+      })
+      .catch((error) => {
+        toast.show({
+          render: () => (
+            <CustomToast
+              id="signup-failure"
+              title="Failed to Sign Up"
+              description={error.message}
+              status="error"
+              variant="solid"
+              onClose={() => toast.close("signup-failure")}
+            />
+          ),
+          placement: "top",
+        });
+        console.log(error);
+      });
   };
+
   return (
     <Box
       flex={1}
@@ -163,7 +188,7 @@ export function SignUp() {
         </FormControl>
         <Button
           onPress={handleSubmitSignUp}
-          mt="78px"
+          mt="60px"
           width="100%"
           h={60}
           borderRadius={10}

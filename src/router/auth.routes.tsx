@@ -9,7 +9,7 @@ const AuthStack = createNativeStackNavigator();
 export function AuthRoutes() {
   return (
     <AuthStack.Navigator
-      initialRouteName="Signup"
+      initialRouteName="Login"
       screenOptions={{
         headerShown: false,
         headerTransparent: true,

@@ -12,14 +12,17 @@ import {
   Pressable,
   Text,
   VStack,
+  useToast,
 } from "native-base";
 import React, { useState } from "react";
+import { CustomToast } from "../../components/CustomToast";
+import { signIn } from "../../services/auth";
 
 export function LogIn() {
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const toast = useToast();
   const navigation = useNavigation();
   const handleEmailChange = (value: string) => {
     setEmail(value);
@@ -29,14 +32,24 @@ export function LogIn() {
     setPassword(value);
   };
 
-  const handleNameChange = (value: string) => {
-    setName(value);
+  const handleSubmitLogIn = async () => {
+    signIn(email, password).catch((error) => {
+      toast.show({
+        render: () => (
+          <CustomToast
+            id="login-failure"
+            title="Failed to log in"
+            description={error.message}
+            status="error"
+            variant="solid"
+            onClose={() => toast.close("login-failure")}
+          />
+        ),
+        placement: "top",
+      });
+    });
   };
 
-  const handleSubmitLogIn = () => {
-    const userLogIn = { name, email, password };
-    console.log(userLogIn);
-  };
   return (
     <Box
       flex={1}
@@ -138,7 +151,7 @@ export function LogIn() {
         </FormControl>
         <Button
           onPress={handleSubmitLogIn}
-          mt="78px"
+          mt="60px"
           width="100%"
           h={60}
           borderRadius={10}

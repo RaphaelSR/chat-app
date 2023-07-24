@@ -9,6 +9,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { NativeBaseProvider } from "native-base";
 import React from "react";
+import AppProvider from "./src/contexts/AppProvider";
 import { Routes } from "./src/router";
 
 export default function App() {
@@ -32,7 +33,9 @@ export default function App() {
 
   return (
     <NativeBaseProvider config={config}>
-      <Routes />
+      <AppProvider>
+        <Routes />
+      </AppProvider>
     </NativeBaseProvider>
   );
 }

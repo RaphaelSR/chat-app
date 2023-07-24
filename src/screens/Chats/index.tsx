@@ -1,15 +1,8 @@
 import { Entypo } from "@expo/vector-icons/";
-import {
-  Avatar,
-  Box,
-  Center,
-  HStack,
-  Heading,
-  Icon,
-  Pressable,
-} from "native-base";
+import { Box, Center, HStack, Heading, Icon, Pressable } from "native-base";
 import React from "react";
 import { ChatList } from "../../components/ChatList";
+import { UserAvatar } from "../../components/UserAvatar";
 import { chatData } from "../../data/MockedUsers";
 
 export function Chats() {
@@ -48,8 +41,7 @@ export function Chats() {
           <Heading p="4" fontSize="18px" fontFamily="Roboto_700Bold">
             Chats
           </Heading>
-          <Avatar
-            size="48px"
+          <UserAvatar
             source={{
               uri: "https://avatars.githubusercontent.com/u/12202804?v=4",
             }}
