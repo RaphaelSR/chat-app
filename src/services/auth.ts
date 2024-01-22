@@ -1,11 +1,9 @@
 import { User as FirebaseUser, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut as signOutFirebase } from "firebase/auth";
+import { auth } from '../config/firebase';
+import { User, UserStatus } from '../types';
+import { addUserToFirestore, getUserFromFirestore } from "./db";
 import { getErrorMessage } from "./errorMessages";
-import { auth } from './firebase';
 
-interface User {
-  loggedIn: boolean;
-  userId: string | null;
-}
 
 export const signIn = async (email: string, password: string): Promise<void> => {
   try {
@@ -15,8 +13,7 @@ export const signIn = async (email: string, password: string): Promise<void> => 
   }
 };
 
-
-export const signOut = async (): Promise<void> => {
+export const logout = async (): Promise<void> => {
   try {
     await signOutFirebase(auth);
   } catch (error) {
@@ -24,24 +21,53 @@ export const signOut = async (): Promise<void> => {
   }
 };
 
-
-export const signUp = async (email: string, password: string): Promise<User> => {
+export const signUp = async (
+  email: string, 
+  password: string, 
+  name: string, 
+  avatar: string, 
+  status: UserStatus | string
+): Promise<User> => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const firebaseUser = userCredential.user;
-    return { loggedIn: true, userId: firebaseUser.uid };
+
+    const user: User = {
+      userId: firebaseUser.uid,
+      email,
+      name,
+      avatar,
+      status,
+      contacts: [],
+      groups: [],
+      lastActive: new Date(),
+      privacySettings: {
+        lastSeen: "everyone",
+        profilePhoto: "everyone",
+        about: "everyone",
+        status: "everyone",
+      },
+    };
+
+    await addUserToFirestore(user);
+
+    return user;
   } catch (error) {
     throw new Error(getErrorMessage(error.code));
   }
 };
-  
+
+
 
 export const onAuthStateChange = (callback: (user: User) => void): (() => void) => {
-  return onAuthStateChanged(auth, (user: FirebaseUser | null) => {
-    if (user) {
-      callback({ loggedIn: true, userId: user.uid });
+  return onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
+    if (firebaseUser) {
+      const user = await getUserFromFirestore(firebaseUser.uid);
+      callback({ ...user, loggedIn: true });
     } else {
       callback({ loggedIn: false, userId: null });
     }
   });
 };
+
+

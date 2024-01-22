@@ -1,6 +1,5 @@
 import { Entypo } from "@expo/vector-icons/";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-
 import {
   Avatar,
   Box,
@@ -12,8 +11,11 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React from "react";
-import { UserData } from "../../data/MockedUsers";
+import React, { useEffect, useState } from "react";
+import { MessageInput } from "../../components/MessageInput";
+import { MessageList } from "../../components/MessageList";
+import { getUserFromFirestore } from "../../services/db";
+import { Message, User, UserData } from "../../types";
 
 type RootStackParamList = {
   ChatRoom: { user: UserData };
@@ -47,6 +49,34 @@ export function ChatRoom() {
   const route = useRoute<ChatRoomRouteProp>();
   const { user } = route.params;
   const navigation = useNavigation();
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  useEffect(() => {
+    // Carregar o usuário atual do banco de dados
+    getUserFromFirestore(user.userId).then((user) => setCurrentUser(user));
+    // Carregar as mensagens do chat do banco de dados
+    // TODO: Substituir "chatId" pelo ID do chat real
+    // getMessagesFromChat("chatId").then((messages) => setMessages(messages));
+  }, [user.userId]);
+
+  const handleSend = (messageText: string) => {
+    if (currentUser) {
+      const message: Message = {
+        messageId: Date.now().toString(),
+        sender: currentUser,
+        timestamp: new Date(),
+        textContent: messageText,
+        deliveryStatus: "sent",
+        unreadCount: 0,
+      };
+      // Adicionar a nova mensagem ao banco de dados
+      // TODO: Substituir "chatId" pelo ID do chat real
+      // addMessageToChat("chatId", message);
+      // Adicionar a nova mensagem à lista de mensagens local
+      setMessages((prevMessages) => [...prevMessages, message]);
+    }
+  };
 
   return (
     <Center flex={1}>
@@ -57,10 +87,11 @@ export function ChatRoom() {
         _light={{
           bg: "white",
         }}
-        flex="1"
+        flex={1}
         safeAreaTop
         maxW="400px"
         w="100%"
+        justifyContent="space-between"
       >
         <HStack
           alignItems="center"
@@ -115,6 +146,8 @@ export function ChatRoom() {
             />
           </HStack>
         </HStack>
+        <MessageList messages={messages} currentUser={currentUser} />
+        <MessageInput onSend={handleSend} />
       </Box>
     </Center>
   );

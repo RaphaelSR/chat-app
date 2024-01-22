@@ -1,5 +1,6 @@
 import { Entypo, MaterialIcons } from "@expo/vector-icons/";
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import {
   Avatar,
   Box,
@@ -9,43 +10,82 @@ import {
   Spacer,
   Text,
   VStack,
+  useToast,
 } from "native-base";
-import React, { useState } from "react";
+import React from "react";
 import { SwipeListView } from "react-native-swipe-list-view";
-import { UserData } from "../../data/MockedUsers";
+import { useAuth } from "../../contexts/AuthContext";
+import { deleteContactFromFirebase } from "../../services/db";
+import { Contact } from "../../types";
+import { CustomToast } from "../CustomToast";
 
-export function ContactList({ chatData }: { chatData: UserData[] }) {
-  const navigation = useNavigation();
-  const sortedChatData = [...chatData].sort(
-    (a, b) => new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime()
-  );
-  const [chatListData, setChatListData] = useState<UserData[]>(sortedChatData);
+type RootStackParamList = {
+  ChatRoom: { user: Contact };
+};
 
-  const closeChatRow = (
-    rowMap: { [x: string]: { closeRow: () => void } },
-    rowKey: string | number
-  ) => {
+interface ContactListProps {
+  contactData: Contact[];
+  fetchContacts: () => void;
+}
+
+export function ContactList({ contactData, fetchContacts }: ContactListProps) {
+  const navigation =
+    useNavigation<StackNavigationProp<RootStackParamList, "ChatRoom">>();
+
+  const { user } = useAuth();
+  const toast = useToast();
+
+  const closeContactRow = (rowMap: any, rowKey: string | number) => {
     if (rowMap[rowKey]) {
       rowMap[rowKey].closeRow();
     }
   };
 
-  const deleteChatRow = (
-    rowMap: { [x: string]: { closeRow: () => void } },
-    rowKey: string | number
+  const deleteContactRow = async (
+    rowMap: any,
+    rowKey: string | any,
+    userId: string | any
   ) => {
-    closeChatRow(rowMap, rowKey);
-    const updatedData = [...chatListData];
-    const previousIndex = chatListData.findIndex((item) => item.key === rowKey);
-    updatedData.splice(previousIndex, 1);
-    setChatListData(updatedData);
+    const deleteSuccess = await deleteContactFromFirebase(userId, rowKey);
+    if (deleteSuccess) {
+      closeContactRow(rowMap, rowKey);
+      fetchContacts();
+      toast.show({
+        render: () => (
+          <CustomToast
+            id="delete-contact-success"
+            title="Success"
+            description="Contact deleted successfully!"
+            status="success"
+            variant="solid"
+            onClose={() => toast.close("delete-contact-success")}
+          />
+        ),
+        placement: "top",
+      });
+    } else {
+      console.error("Erro ao deletar contato da lista de contatos");
+      toast.show({
+        render: () => (
+          <CustomToast
+            id="delete-contact-failure"
+            title="Error"
+            description="Failed to delete contact!"
+            status="error"
+            variant="solid"
+            onClose={() => toast.close("delete-contact-failure")}
+          />
+        ),
+        placement: "top",
+      });
+    }
   };
 
-  const onChatRowOpen = (rowKey: any) => {
+  const onContactRowOpen = (rowKey: any) => {
     console.log("This row opened", rowKey);
   };
 
-  const renderChatItem = ({ item }: { item: UserData }) => (
+  const renderContactItem = ({ item }: { item: Contact }) => (
     <Pressable
       onPress={() => navigation.navigate("ChatRoom", { user: item })}
       _dark={{ bg: "coolGray.800" }}
@@ -55,10 +95,10 @@ export function ContactList({ chatData }: { chatData: UserData[] }) {
     >
       <Box pl="4" pr="4" pb="1" mt="4">
         <HStack alignItems="center" space={3}>
-          <Avatar size="48px" source={{ uri: item.avatarUrl }} />
+          <Avatar size="48px" source={{ uri: item.avatar }} />
           <VStack>
             <Text color="blueGray.800" _dark={{ color: "warmGray.50" }} bold>
-              {item.fullName}
+              {item.name}
             </Text>
             <Text color={"warmGray.400"} _dark={{ color: "warmGray.200" }}>
               Last seen recently
@@ -81,8 +121,8 @@ export function ContactList({ chatData }: { chatData: UserData[] }) {
     </Pressable>
   );
 
-  const renderHiddenChatItem = (
-    data: { item: UserData },
+  const renderHiddenContactItem = (
+    data: { item: Contact },
     rowMap: { [x: string]: { closeRow: () => void } | { closeRow: () => void } }
   ) => (
     <HStack flex="1" pl="2">
@@ -92,7 +132,7 @@ export function ContactList({ chatData }: { chatData: UserData[] }) {
         cursor="pointer"
         bg="blueGray.800"
         justifyContent="center"
-        onPress={() => closeChatRow(rowMap, data.item.key)}
+        onPress={() => closeContactRow(rowMap, data.item.userId)}
         _pressed={{ opacity: 0.5 }}
       >
         <VStack alignItems="center" space={2}>
@@ -111,7 +151,7 @@ export function ContactList({ chatData }: { chatData: UserData[] }) {
         cursor="pointer"
         bg="red.500"
         justifyContent="center"
-        onPress={() => deleteChatRow(rowMap, data.item.key)}
+        onPress={() => deleteContactRow(rowMap, data.item.userId, user?.userId)}
         _pressed={{ opacity: 0.5 }}
       >
         <VStack alignItems="center" space={2}>
@@ -127,14 +167,15 @@ export function ContactList({ chatData }: { chatData: UserData[] }) {
   return (
     <Box bg="white" flex="1">
       <SwipeListView
-        data={chatListData}
-        renderItem={renderChatItem}
-        renderHiddenItem={renderHiddenChatItem}
+        data={contactData}
+        keyExtractor={(item) => item.userId}
+        renderItem={renderContactItem}
+        renderHiddenItem={renderHiddenContactItem}
         rightOpenValue={-130}
         previewRowKey={"0"}
         previewOpenValue={-40}
         previewOpenDelay={3000}
-        onRowDidOpen={onChatRowOpen}
+        onRowDidOpen={onContactRowOpen}
       />
     </Box>
   );

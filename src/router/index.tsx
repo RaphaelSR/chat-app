@@ -34,7 +34,7 @@ export function Routes() {
         backgroundColor="transparent"
         barStyle={Platform.OS === "android" ? "dark-content" : "default"}
       />
-      {user?.loggedIn ? <AppRoutes /> : <AuthRoutes />}
+      {user?.userId ? <AppRoutes /> : <AuthRoutes />}
     </NavigationContainer>
   );
 }

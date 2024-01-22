@@ -33,7 +33,7 @@ export function LogIn() {
   };
 
   const handleSubmitLogIn = async () => {
-    signIn(email, password).catch((error) => {
+    signIn(email.toLowerCase(), password).catch((error) => {
       toast.show({
         render: () => (
           <CustomToast

@@ -11,20 +11,17 @@ import {
   VStack,
 } from "native-base";
 import React, { useState } from "react";
-import { SwipeListView } from "react-native-swipe-list-view";
-import { UserData } from "../../data/MockedUsers";
+import { Contact } from "../../types";
 import { UnreadMessagesBadge } from "../UnreadMessagesBadge";
 
-type ChatListProps = {
-  chatData: UserData[];
-};
-
-export function ChatList({ chatData }: ChatListProps) {
+export function ChatList({ chatData }: { chatData: Contact[] }) {
   const navigation = useNavigation();
   const sortedChatData = [...chatData].sort(
-    (a, b) => new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime()
+    (a, b) =>
+      b.chat.messages[b.chat.messages.length - 1].timestamp.getTime() -
+      a.chat.messages[a.chat.messages.length - 1].timestamp.getTime()
   );
-  const [chatListData, setChatListData] = useState<UserData[]>(sortedChatData);
+  const [chatListData, setChatListData] = useState<Contact[]>(sortedChatData);
 
   const closeChatRow = (
     rowMap: { [x: string]: { closeRow: () => void } },
@@ -41,7 +38,9 @@ export function ChatList({ chatData }: ChatListProps) {
   ) => {
     closeChatRow(rowMap, rowKey);
     const updatedData = [...chatListData];
-    const previousIndex = chatListData.findIndex((item) => item.key === rowKey);
+    const previousIndex = chatListData.findIndex(
+      (item) => item.userId === rowKey
+    );
     updatedData.splice(previousIndex, 1);
     setChatListData(updatedData);
   };
@@ -50,7 +49,7 @@ export function ChatList({ chatData }: ChatListProps) {
     console.log("This row opened", rowKey);
   };
 
-  const renderChatItem = ({ item }: { item: UserData }) => (
+  const renderChatItem = ({ item }: { item: Contact }) => (
     <Pressable
       onPress={() => navigation.navigate("ChatRoom", { user: item })}
       _dark={{ bg: "coolGray.800" }}
@@ -61,17 +60,24 @@ export function ChatList({ chatData }: ChatListProps) {
     >
       <Box pl="4" pr="4" py="4">
         <HStack alignItems="center" space={3}>
-          <Avatar size="48px" source={{ uri: item.avatarUrl }} />
+          <Avatar size="48px" source={{ uri: item.avatar }} />
           <VStack>
             <Text color="blueGray.800" _dark={{ color: "warmGray.50" }} bold>
-              {item.fullName}
+              {item.name}
             </Text>
-            <Text
-              color={item.unreadMessages > 0 ? "orange.500" : "blueGray.600"}
-              _dark={{ color: "warmGray.200" }}
-            >
-              {item.recentText}
-            </Text>
+            {item.chat.messages && (
+              <Text
+                color={
+                  item.chat.messages[item.chat.messages.length - 1]
+                    .unreadCount > 0
+                    ? "orange.500"
+                    : "blueGray.600"
+                }
+                _dark={{ color: "warmGray.200" }}
+              >
+                {item.chat.messages[item.chat.messages.length - 1].textContent}
+              </Text>
+            )}
           </VStack>
           <Spacer />
           <VStack alignItems="center">
@@ -81,10 +87,17 @@ export function ChatList({ chatData }: ChatListProps) {
               _dark={{ color: "warmGray.50" }}
               alignSelf="flex-start"
             >
-              {item.timeStamp}
+              {new Date(
+                item.chat.messages[item.chat.messages.length - 1].timestamp
+              ).toLocaleTimeString()}
             </Text>
-            {item.unreadMessages > 0 && (
-              <UnreadMessagesBadge messages={item.unreadMessages} />
+            {item.chat.messages[item.chat.messages.length - 1].unreadCount >
+              0 && (
+              <UnreadMessagesBadge
+                messages={
+                  item.chat.messages[item.chat.messages.length - 1].unreadCount
+                }
+              />
             )}
           </VStack>
         </HStack>
@@ -93,7 +106,7 @@ export function ChatList({ chatData }: ChatListProps) {
   );
 
   const renderHiddenChatItem = (
-    data: { item: UserData },
+    data: { item: Contact },
     rowMap: { [x: string]: { closeRow: () => void } | { closeRow: () => void } }
   ) => (
     <HStack flex="1" pl="2">
@@ -103,7 +116,7 @@ export function ChatList({ chatData }: ChatListProps) {
         cursor="pointer"
         bg="blueGray.800"
         justifyContent="center"
-        onPress={() => closeChatRow(rowMap, data.item.key)}
+        onPress={() => closeChatRow(rowMap, data.item.userId)}
         _pressed={{ opacity: 0.5 }}
       >
         <VStack alignItems="center" space={2}>
@@ -122,7 +135,7 @@ export function ChatList({ chatData }: ChatListProps) {
         cursor="pointer"
         bg="red.500"
         justifyContent="center"
-        onPress={() => deleteChatRow(rowMap, data.item.key)}
+        onPress={() => deleteChatRow(rowMap, data.item.userId)}
         _pressed={{ opacity: 0.5 }}
       >
         <VStack alignItems="center" space={2}>
@@ -137,7 +150,8 @@ export function ChatList({ chatData }: ChatListProps) {
 
   return (
     <Box bg="white" flex="1">
-      <SwipeListView
+      {/* //TODO: Fix swipe list view */}
+      {/* <SwipeListView
         data={chatListData}
         renderItem={renderChatItem}
         renderHiddenItem={renderHiddenChatItem}
@@ -146,7 +160,7 @@ export function ChatList({ chatData }: ChatListProps) {
         previewOpenValue={-40}
         previewOpenDelay={3000}
         onRowDidOpen={onChatRowOpen}
-      />
+      /> */}
     </Box>
   );
 }

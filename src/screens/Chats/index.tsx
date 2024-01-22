@@ -1,11 +1,12 @@
 import { Entypo } from "@expo/vector-icons/";
 import { Box, Center, HStack, Heading, Icon, Pressable } from "native-base";
 import React from "react";
-import { ChatList } from "../../components/ChatList";
 import { UserAvatar } from "../../components/UserAvatar";
-import { chatData } from "../../data/MockedUsers";
+import { useAuth } from "../../contexts/AuthContext";
 
 export function Chats() {
+  const { user } = useAuth();
+
   return (
     <Center flex={1}>
       <Box
@@ -17,7 +18,6 @@ export function Chats() {
         }}
         flex="1"
         safeAreaTop
-        maxW="400px"
         w="100%"
       >
         <HStack
@@ -43,11 +43,11 @@ export function Chats() {
           </Heading>
           <UserAvatar
             source={{
-              uri: "https://avatars.githubusercontent.com/u/12202804?v=4",
+              uri: user?.avatar,
             }}
           />
         </HStack>
-        <ChatList chatData={chatData} />
+        {/* {user && <ChatList chatData={user.contacts} />} */}
       </Box>
     </Center>
   );

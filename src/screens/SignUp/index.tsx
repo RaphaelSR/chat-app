@@ -18,17 +18,22 @@ import React, { useState } from "react";
 import { CustomToast } from "../../components/CustomToast";
 import { useAuth } from "../../contexts/AuthContext";
 import { signUp } from "../../services/auth";
+import { UserStatus } from "../../types";
 
 export function SignUp() {
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [avatar, setAvatar] = useState("");
+  const [status, setStatus] = useState<UserStatus | string>(
+    UserStatus.Available
+  );
   const navigation = useNavigation();
   const { setUser } = useAuth();
   const toast = useToast();
   const handleEmailChange = (value: string) => {
-    setEmail(value);
+    setEmail(value.toLowerCase());
   };
 
   const handlePasswordChange = (value: string) => {
@@ -40,9 +45,9 @@ export function SignUp() {
   };
 
   const handleSubmitSignUp = () => {
-    signUp(email, password)
+    signUp(email.toLowerCase(), password, name, avatar, status)
       .then((user) => {
-        setUser(user);
+        setUser({ ...user, loggedIn: true });
       })
       .catch((error) => {
         toast.show({

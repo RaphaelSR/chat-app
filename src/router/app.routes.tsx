@@ -6,6 +6,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { ChatRoom } from "../screens/ChatRoom";
 import { Chats } from "../screens/Chats";
 import { Contacts } from "../screens/Contacts";
+import { Profile } from "../screens/Profile";
 
 const AppStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -40,8 +41,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   focusedTab: {
-    borderBottomWidth: 1,
-    borderBottomColor: "orange",
+    // borderBottomWidth: 1,
+    // borderBottomColor: "orange",
     fontFamily: "Roboto_700Bold",
     alignItems: "center",
     justifyContent: "center",
@@ -103,6 +104,7 @@ export function AppRoutes() {
       }}
     >
       <AppStack.Screen name="Home" component={TabNavigator} />
+      <AppStack.Screen name="Profile" component={Profile} />
       <AppStack.Screen name="ChatRoom" component={ChatRoom} />
     </AppStack.Navigator>
   );
