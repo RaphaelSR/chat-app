@@ -1,28 +1,35 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChange, signIn, signOut } from "../services/auth";
-
-interface User {
-  loggedIn: boolean;
-  userId: string | null;
-}
+import { logout, onAuthStateChange, signIn } from "../services/auth";
+import { LoggedInUser, User } from "../types";
 
 interface AuthContextData {
-  user: User | null;
+  user: LoggedInUser | null;
   loading: boolean;
   signIn(email: string, password: string): Promise<void>;
-  signOut(): Promise<void>;
-  setUser: (user: User | null) => void;
+  logout(): Promise<void>;
+  setUser: (user: LoggedInUser | null) => void;
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 export const AuthProvider: React.FC = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<LoggedInUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChange((user: User) => {
-      setUser(user);
+      console.log("user", user);
+      if (user) {
+        setUser({
+          ...user,
+          loggedIn: true,
+        });
+      } else {
+        setUser({
+          loggedIn: false,
+          userId: null,
+        });
+      }
       setLoading(false);
     });
 
@@ -31,13 +38,13 @@ export const AuthProvider: React.FC = ({ children }) => {
     };
   }, []);
 
-  const handleSetUser = (user: User | null) => {
+  const handleSetUser = (user: LoggedInUser | null) => {
     setUser(user);
   };
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, signIn, signOut, setUser: handleSetUser }}
+      value={{ user, loading, signIn, logout, setUser: handleSetUser }}
     >
       {children}
     </AuthContext.Provider>
